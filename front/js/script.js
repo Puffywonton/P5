@@ -9,14 +9,9 @@ async function fetchProducts(result) {
 async function displayAllProducts() {
     await fetchProducts()
     .then (function(products){
-        console.log("there should be a map after this");
         console.log(products);
         for (let product in products){
             productCardCreator(product, products)
-            // let LinkBoxCreator = document.createElement("a");
-            // document.getElementById("items").appendChild(LinkBoxCreator);
-            // console.log("ok");
-            // console.log(products[product]._id);
         }
     })
 }
@@ -38,8 +33,15 @@ function productCardCreator(product, products) {
     articleCreator.appendChild(imageCreator);
 
     let h3Creator = document.createElement("h3");
-    h3Creator.setAttribute("class", selector.name);
+    h3Creator.setAttribute("class", "productName");
     h3Creator.textContent = selector.name;
     articleCreator.appendChild(h3Creator);
+
+    let pCreator = document.createElement("p");
+    pCreator.setAttribute("class", "productDescription");
+    pCreator.textContent = selector.description;
+    articleCreator.appendChild(pCreator);
 }
+
+
 
