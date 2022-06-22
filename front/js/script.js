@@ -16,6 +16,8 @@ async function displayAllProducts() {
     })
 }
 
+
+
 function productCardCreator(product, products) {
     let linkBoxCreator = document.createElement("a");
     let selector = products[product]
