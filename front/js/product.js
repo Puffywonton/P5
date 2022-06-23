@@ -22,12 +22,14 @@ async function displayLeProduct() {
         addImg(leProduct);
         addTitleH1(leProduct);
         addPrice(leProduct);
+        addDescription(leProduct);
+        addColors(leProduct);
     })
 }
 
 function changeTitleHead(newTitle) {
     let findTitle = document.querySelector("title");
-    findTitle.textContent = newTitle.name
+    findTitle.textContent = newTitle.name + " - Kanap";
     console.log(findTitle);
 } 
 
@@ -47,27 +49,18 @@ function addTitleH1(newTitle) {
 function addPrice(newPrice) {
     document.getElementById("price").innerText = newPrice.price
 }
-// let linkBoxCreator = document.createElement("a");
-//     let selector = products[product]
-//     let productID = selector._id;
-//     linkBoxCreator.setAttribute("id", productID)
-//     linkBoxCreator.setAttribute("href", "./product.html?id="+productID)
-//     document.getElementById("items").appendChild(linkBoxCreator)
-    
-//     let articleCreator = document.createElement("article");
-//     document.getElementById(productID).appendChild(articleCreator)
-    
-//     let imageCreator = document.createElement("img");
-//     imageCreator.setAttribute("src", selector.imageUrl);
-//     imageCreator.setAttribute("alt", selector.altTxt+", "+selector.name);
-//     articleCreator.appendChild(imageCreator);
 
-//     let h3Creator = document.createElement("h3");
-//     h3Creator.setAttribute("class", "productName");
-//     h3Creator.textContent = selector.name;
-//     articleCreator.appendChild(h3Creator);
+function addDescription(newDescription) {
+    document.getElementById("description").innerText = newDescription.description
+}
 
-//     let pCreator = document.createElement("p");
-//     pCreator.setAttribute("class", "productDescription");
-//     pCreator.textContent = selector.description;
-//     articleCreator.appendChild(pCreator);
+function addColors(newColors) {
+    console.log(newColors.colors)
+    for (let color in newColors.colors){
+        let addNewColor = document.createElement("option");
+        addNewColor.setAttribute("value", newColors.colors[color]);
+        addNewColor.innerText= newColors.colors[color];
+        document.getElementById("colors").appendChild(addNewColor);
+        // document.getElementById("colors").innerHTML = "<option value=\""+newColors.colors[color]+"\">"+newColors.colors[color]+"</option>";
+    }
+}
