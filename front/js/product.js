@@ -64,3 +64,44 @@ function addColors(newColors) {
         // document.getElementById("colors").innerHTML = "<option value=\""+newColors.colors[color]+"\">"+newColors.colors[color]+"</option>";
     }
 }
+
+const cartAddButton = document.getElementById("addToCart");
+cartAddButton.addEventListener('click', function(){
+    console.log("CLICK CLICK");
+
+    console.log(productId);
+
+    let itemColor = document.getElementById("colors");
+    console.log(itemColor.value);
+
+    let itemQty = document.getElementById("quantity");
+    console.log(itemQty.value);
+
+    let cartItem = productId + "__" + itemColor.value + "__" + itemQty.value;
+    console.log(cartItem);
+    
+    addToCart(cartItem);
+})
+
+function addToCart(itemToAdd) {
+    console.log("hello there");
+    if (localStorage.getItem("cart") === null) {
+        localStorage.setItem("cart", "");
+        console.log("adding new cart");
+        console.log(localStorage);
+    } else {
+        console.log("cart array content: " + localStorage.getItem("cart"));
+    }
+    
+    let ogCart = localStorage.getItem("cart");
+    let updatedCartItems = ogCart + itemToAdd + " , ";
+    localStorage.setItem("cart", updatedCartItems);
+    console.log("new cart item should be below as a string");
+    console.log(localStorage);
+}
+
+// function CLEAR(){
+//     localStorage.clear();
+// }
+// CLEAR();
+
