@@ -65,43 +65,71 @@ function addColors(newColors) {
     }
 }
 
-const cartAddButton = document.getElementById("addToCart");
-cartAddButton.addEventListener('click', function(){
-    console.log("CLICK CLICK");
 
-    console.log(productId);
+//ca marche mais c'est un peu nase:
 
-    let itemColor = document.getElementById("colors");
-    console.log(itemColor.value);
+// const cartAddButton = document.getElementById("addToCart");
+// cartAddButton.addEventListener('click', function(){
+//     console.log("CLICK CLICK");
 
-    let itemQty = document.getElementById("quantity");
-    console.log(itemQty.value);
+//     console.log(productId);
 
-    let cartItem = productId + "__" + itemColor.value + "__" + itemQty.value;
-    console.log(cartItem);
+//     let itemColor = document.getElementById("colors");
+//     console.log(itemColor.value);
+
+//     let itemQty = document.getElementById("quantity");
+//     console.log(itemQty.value);
+
+//     let cartItem = productId + "__" + itemColor.value + "__" + itemQty.value;
+//     console.log(cartItem);
     
-    addToCart(cartItem);
-})
+//     addToCart(cartItem);
+// })
 
-function addToCart(itemToAdd) {
-    console.log("hello there");
-    if (localStorage.getItem("cart") === null) {
-        localStorage.setItem("cart", "");
-        console.log("adding new cart");
-        console.log(localStorage);
-    } else {
-        console.log("cart array content: " + localStorage.getItem("cart"));
-    }
+// function addToCart(itemToAdd) {
+//     console.log("hello there");
+//     if (localStorage.getItem("cart") === null) {
+//         localStorage.setItem("cart", "");
+//         console.log("adding new cart");
+//         console.log(localStorage);
+//     } else {
+//         console.log("cart array content: " + localStorage.getItem("cart"));
+//     }
     
-    let ogCart = localStorage.getItem("cart");
-    let updatedCartItems = ogCart + itemToAdd + " , ";
-    localStorage.setItem("cart", updatedCartItems);
-    console.log("new cart item should be below as a string");
-    console.log(localStorage);
-}
+//     let ogCart = localStorage.getItem("cart");
+//     let updatedCartItems = ogCart + itemToAdd + " , ";
+//     localStorage.setItem("cart", updatedCartItems);
+//     console.log("new cart item should be below as a string");
+//     console.log(localStorage);
+// }
 
 // function CLEAR(){
 //     localStorage.clear();
 // }
 // CLEAR();
 
+const cartAddButton = document.getElementById("addToCart");
+cartAddButton.addEventListener('click', function(){
+    let cartItem = {
+        id: productId,
+        color: document.getElementById("colors").value,
+        quantity: document.getElementById("quantity").value,
+    };
+    let cartItemString = JSON.stringify(cartItem);
+    console.log(cartItemString);
+    
+    // addToCart(cartItem);
+})
+
+function addToCart(itemToAdd) {
+    console.log("hello there");
+    if (localStorage.getItem("cart") === null) {
+        localStorage.setItem("cart", []);
+        console.log("adding a cart");
+    };
+    let ogCart = localStorage.getItem("cart");
+    let updatedCartItems = ogCart + itemToAdd + " , ";
+    localStorage.setItem("cart", updatedCartItems);
+    console.log("new cart item should be below as a string");
+    console.log(localStorage);
+}

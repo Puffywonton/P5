@@ -22,17 +22,6 @@ async function fetchOneProduct(result , productId) {
     return result.json();
 }
 
-// async function displayLeProduct() {
-//     await fetchOneProduct()
-//     .then (function(leProduct) {
-//         console.log(leProduct);
-//         addImg(leProduct);
-//         addTitleH1(leProduct);
-//         addPrice(leProduct);
-//         addDescription(leProduct);
-//         addColors(leProduct);
-//     })
-// }
 
 async function displayCartItems(productId, productColor, productQty) {
     await fetchOneProduct("", productId)
