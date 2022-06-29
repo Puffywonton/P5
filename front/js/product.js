@@ -1,7 +1,6 @@
 
 function getProductId(){
     let params = (new URL(document.location)).searchParams;
-    //QUESTION POURQUOI NEW ?
     return params.get('id');
 }
 
@@ -65,71 +64,56 @@ function addColors(newColors) {
     }
 }
 
-
-//ca marche mais c'est un peu nase:
-
-// const cartAddButton = document.getElementById("addToCart");
-// cartAddButton.addEventListener('click', function(){
-//     console.log("CLICK CLICK");
-
-//     console.log(productId);
-
-//     let itemColor = document.getElementById("colors");
-//     console.log(itemColor.value);
-
-//     let itemQty = document.getElementById("quantity");
-//     console.log(itemQty.value);
-
-//     let cartItem = productId + "__" + itemColor.value + "__" + itemQty.value;
-//     console.log(cartItem);
-    
-//     addToCart(cartItem);
-// })
-
-// function addToCart(itemToAdd) {
-//     console.log("hello there");
-//     if (localStorage.getItem("cart") === null) {
-//         localStorage.setItem("cart", "");
-//         console.log("adding new cart");
-//         console.log(localStorage);
-//     } else {
-//         console.log("cart array content: " + localStorage.getItem("cart"));
-//     }
-    
-//     let ogCart = localStorage.getItem("cart");
-//     let updatedCartItems = ogCart + itemToAdd + " , ";
-//     localStorage.setItem("cart", updatedCartItems);
-//     console.log("new cart item should be below as a string");
-//     console.log(localStorage);
-// }
-
-// function CLEAR(){
-//     localStorage.clear();
-// }
+function CLEAR(){
+    localStorage.clear();
+}
 // CLEAR();
 
-const cartAddButton = document.getElementById("addToCart");
-cartAddButton.addEventListener('click', function(){
+function cartItemCreator(color, quantity){
     let cartItem = {
         id: productId,
-        color: document.getElementById("colors").value,
-        quantity: document.getElementById("quantity").value,
     };
-    let cartItemString = JSON.stringify(cartItem);
-    console.log(cartItemString);
+    cartItem[color] = quantity;
+    return cartItem;
+}
+
+const cartAddButton = document.getElementById("addToCart");
+cartAddButton.addEventListener("click", function(){
     
-    // addToCart(cartItem);
+    let productColor = document.getElementById("colors").value;
+    let productQty = document.getElementById("quantity").value;
+
+    if (localStorage.getItem("cart") === null) {
+        let cartArray = [];
+        cartArray.push(cartItemCreator(productColor, productQty)); 
+        localStorage.setItem("cart", JSON.stringify(cartArray));
+        console.log(localStorage);
+    }else{
+        let cart = JSON.parse(localStorage.getItem("cart"));
+        console.log("what is cart")
+        console.log(cart)
+        for (let item in cart){
+            if (cart[item].id == productId) {
+                for (let key in Object.keys(cart[item])) {
+                    
+                    if (Object.keys(cart[item])[key] == productColor) {
+                        cart.splice(item);
+                        cart.push(cartItemCreator(productColor, productQty));
+                        localStorage.setItem("cart", JSON.stringify(cart));
+                    }
+                }
+            }
+        }
+    }
+
+    //if no cart -> create one and push stuff EASY
+    //else there is a cart
+        //if id is in the cart
+            //if color of that id matches color of product
+                //update qty of that color
+            //else push stuff EASY
+        //else push stuff EASY
+
 })
 
-function addToCart(itemToAdd) {
-    console.log("hello there");
-    if (localStorage.getItem("cart") === null) {
-        localStorage.setItem("cart", []);
-        console.log("adding a cart");
-    };
-    let ogCart = localStorage.getItem("cart");
-    let updatedCartItems = ogCart + itemToAdd + " , ";
-    localStorage.setItem("cart", updatedCartItems);
-    console.log("new cart item should be below as a string");
-    console.log(localStorage);
-}
+
