@@ -12,9 +12,8 @@ async function fetchOneProduct(result) {
     result = await fetch("http://localhost:3000/api/products/"+productId)
     return result.json();
 }
-
-async function displayLeProduct() {
-    await fetchOneProduct()
+function displayLeProduct() {
+    fetchOneProduct()
     .then (function(leProduct) {
         console.log(leProduct);
         changeTitleHead(leProduct);
@@ -69,6 +68,15 @@ function CLEAR(){
 }
 // CLEAR();
 
+function cartCreator(){
+    if (localStorage.getItem("cart") === null) {
+        let cartArray = [];
+        console.log("creating new cart");
+        localStorage.setItem("cart", JSON.stringify(cartArray));
+    }
+}
+cartCreator();
+
 function cartItemCreator(color, quantity){
     let cartItem = {
         id: productId,
@@ -114,13 +122,7 @@ cartAddButton.addEventListener("click", function(){
 
 function updateOnScreenQty(){
     let productColor = document.getElementById("colors").value;
-
     let cart = JSON.parse(localStorage.getItem("cart"));
-    // let findQty = cart.find(function(item){
-    //     if (item.id == productId && item.color == productColor) {
-    //         return item
-    //     }
-    // })
     let findQty = cart.find(item => item.id == productId && item.color == productColor)
     if (findQty == null){
         document.getElementById("quantity").value = 0;

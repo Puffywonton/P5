@@ -1,30 +1,17 @@
 getCartFromStorage();
 function getCartFromStorage() {
-    let cartString = localStorage.getItem("cart");
-    console.log(cartString);
-    let cartArray = cartString.split(" , ");
-    cartArray.pop();
-    console.log(cartArray);
-    for (let string in cartArray){
-        let cartItemString = cartArray[string];
-        let cartItemArray = cartItemString.split("__");
-        //product info:
-        let productId = cartItemArray[0];
-        let productColor = cartItemArray[1];
-        let productQty = cartItemArray[2];
-        console.log(productId, productColor, productQty);
-        displayCartItems(productId, productColor, productQty);
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    for (let item in cart){
+        displayCartItems(cart[item].id, cart[item].color, cart[item].qty)
     }
-
 }
 async function fetchOneProduct(result , productId) {
     result = await fetch("http://localhost:3000/api/products/"+productId)
     return result.json();
 }
 
-
-async function displayCartItems(productId, productColor, productQty) {
-    await fetchOneProduct("", productId)
+function displayCartItems(productId, productColor, productQty) {
+    fetchOneProduct("", productId)
     .then (function(leProduct){
         let addArticle = document.createElement("article");
         addArticle.setAttribute("class", "cart__item");
