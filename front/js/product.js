@@ -72,14 +72,16 @@ function CLEAR(){
 function cartItemCreator(color, quantity){
     let cartItem = {
         id: productId,
+        color: color,
+        qty: quantity 
     };
-    cartItem[color] = quantity;
+    console.log(cartItem);
     return cartItem;
 }
 
 const cartAddButton = document.getElementById("addToCart");
 cartAddButton.addEventListener("click", function(){
-    
+
     let productColor = document.getElementById("colors").value;
     let productQty = document.getElementById("quantity").value;
 
@@ -87,33 +89,49 @@ cartAddButton.addEventListener("click", function(){
         let cartArray = [];
         cartArray.push(cartItemCreator(productColor, productQty)); 
         localStorage.setItem("cart", JSON.stringify(cartArray));
-        console.log(localStorage);
+        console.log("creating new cart");
     }else{
         let cart = JSON.parse(localStorage.getItem("cart"));
-        console.log("what is cart")
-        console.log(cart)
-        for (let item in cart){
-            if (cart[item].id == productId) {
-                for (let key in Object.keys(cart[item])) {
-                    
-                    if (Object.keys(cart[item])[key] == productColor) {
-                        cart.splice(item);
-                        cart.push(cartItemCreator(productColor, productQty));
-                        localStorage.setItem("cart", JSON.stringify(cart));
-                    }
-                }
+        let locateItem = cart.find(function(item){
+            if (item.id == productId && item.color == productColor){
+                console.log("item already in cart")
+                //rajouter un if > ou < si il faut virer le updateonscreen!!!
+                item.qty = productQty;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                return item
             }
+        })
+        if (locateItem == null) {
+            console.log("item not in cart");
+            cart.push(cartItemCreator(productColor, productQty)); 
+            localStorage.setItem("cart", JSON.stringify(cart));
+            }
+        console.log(localStorage);
         }
+    })
+
+
+
+function updateOnScreenQty(){
+    let productColor = document.getElementById("colors").value;
+
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    // let findQty = cart.find(function(item){
+    //     if (item.id == productId && item.color == productColor) {
+    //         return item
+    //     }
+    // })
+    let findQty = cart.find(item => item.id == productId && item.color == productColor)
+    if (findQty == null){
+        document.getElementById("quantity").value = 0;
+    } else{
+        console.log(findQty.qty);
+        document.getElementById("quantity").value = findQty.qty;
     }
+}
 
-    //if no cart -> create one and push stuff EASY
-    //else there is a cart
-        //if id is in the cart
-            //if color of that id matches color of product
-                //update qty of that color
-            //else push stuff EASY
-        //else push stuff EASY
-
+document.getElementById("colors").addEventListener("change", function(){
+    updateOnScreenQty()
 })
 
 
