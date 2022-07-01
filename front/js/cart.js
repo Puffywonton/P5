@@ -51,7 +51,7 @@ async function displayCartItems(productId, productColor, productQty) {
         addPcolor.textContent = productColor;
         addDivContentDescription.appendChild(addPcolor);
         let addPprice = document.createElement("p");
-        addPprice.textContent = leProduct.price;
+        addPprice.textContent = leProduct.price + "€";
         addDivContentDescription.appendChild(addPprice);
 
         addDivContent.appendChild(addDivContentDescription)

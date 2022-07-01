@@ -1,7 +1,7 @@
 
 function getProductId(){
     let params = (new URL(document.location)).searchParams;
-    //QUESTION POURQUOI NEW ?
+    //pourquoi new??
     return params.get('id');
 }
 
@@ -14,17 +14,28 @@ async function fetchOneProduct(result) {
     return result.json();
 }
 
+// function displayLeProduct() {
+//      fetchOneProduct()
+//     .then (function(leProduct) {
+//         console.log(leProduct);
+//         changeTitleHead(leProduct);
+//         addImg(leProduct);
+//         addTitleH1(leProduct);
+//         addPrice(leProduct);
+//         addDescription(leProduct);
+//         addColors(leProduct);
+//     })
+// }
+
 async function displayLeProduct() {
-    await fetchOneProduct()
-    .then (function(leProduct) {
-        console.log(leProduct);
-        changeTitleHead(leProduct);
-        addImg(leProduct);
-        addTitleH1(leProduct);
-        addPrice(leProduct);
-        addDescription(leProduct);
-        addColors(leProduct);
-    })
+    let leProduct= await fetchOneProduct();     
+    console.log(leProduct);
+    changeTitleHead(leProduct);
+    addImg(leProduct);
+    addTitleH1(leProduct);
+    addPrice(leProduct);
+    addDescription(leProduct);
+    addColors(leProduct);
 }
 
 function changeTitleHead(newTitle) {
@@ -68,40 +79,40 @@ function addColors(newColors) {
 
 //ca marche mais c'est un peu nase:
 
-// const cartAddButton = document.getElementById("addToCart");
-// cartAddButton.addEventListener('click', function(){
-//     console.log("CLICK CLICK");
+const cartAddButton = document.getElementById("addToCart");
+cartAddButton.addEventListener('click', function(){
+    console.log("CLICK CLICK");
 
-//     console.log(productId);
+    console.log(productId);
 
-//     let itemColor = document.getElementById("colors");
-//     console.log(itemColor.value);
+    let itemColor = document.getElementById("colors");
+    console.log(itemColor.value);
 
-//     let itemQty = document.getElementById("quantity");
-//     console.log(itemQty.value);
+    let itemQty = document.getElementById("quantity");
+    console.log(itemQty.value);
 
-//     let cartItem = productId + "__" + itemColor.value + "__" + itemQty.value;
-//     console.log(cartItem);
+    let cartItem = productId + "__" + itemColor.value + "__" + itemQty.value;
+    console.log(cartItem);
     
-//     addToCart(cartItem);
-// })
+    addToCart(cartItem);
+})
 
-// function addToCart(itemToAdd) {
-//     console.log("hello there");
-//     if (localStorage.getItem("cart") === null) {
-//         localStorage.setItem("cart", "");
-//         console.log("adding new cart");
-//         console.log(localStorage);
-//     } else {
-//         console.log("cart array content: " + localStorage.getItem("cart"));
-//     }
+function addToCart(itemToAdd) {
+    console.log("hello there");
+    if (localStorage.getItem("cart") === null) {
+        localStorage.setItem("cart", "");
+        console.log("adding new cart");
+        console.log(localStorage);
+    } else {
+        console.log("cart array content: " + localStorage.getItem("cart"));
+    }
     
-//     let ogCart = localStorage.getItem("cart");
-//     let updatedCartItems = ogCart + itemToAdd + " , ";
-//     localStorage.setItem("cart", updatedCartItems);
-//     console.log("new cart item should be below as a string");
-//     console.log(localStorage);
-// }
+    let ogCart = localStorage.getItem("cart");
+    let updatedCartItems = ogCart + itemToAdd + " , ";
+    localStorage.setItem("cart", updatedCartItems);
+    console.log("new cart item should be below as a string");
+    console.log(localStorage);
+}
 
 // function CLEAR(){
 //     localStorage.clear();
@@ -112,8 +123,8 @@ const cartAddButton = document.getElementById("addToCart");
 cartAddButton.addEventListener('click', function(){
     let cartItem = {
         id: productId,
-        color: document.getElementById("colors").value,
-        quantity: document.getElementById("quantity").value,
+        document.getElementById("colors").value : document.getElementById("quantity").value
+        quantity: ,
     };
     let cartItemString = JSON.stringify(cartItem);
     console.log(cartItemString);
@@ -121,15 +132,15 @@ cartAddButton.addEventListener('click', function(){
     // addToCart(cartItem);
 })
 
-function addToCart(itemToAdd) {
-    console.log("hello there");
-    if (localStorage.getItem("cart") === null) {
-        localStorage.setItem("cart", []);
-        console.log("adding a cart");
-    };
-    let ogCart = localStorage.getItem("cart");
-    let updatedCartItems = ogCart + itemToAdd + " , ";
-    localStorage.setItem("cart", updatedCartItems);
-    console.log("new cart item should be below as a string");
-    console.log(localStorage);
-}
+// function addToCart(itemToAdd) {
+//     console.log("hello there");
+//     if (localStorage.getItem("cart") === null) {
+//         localStorage.setItem("cart", []);
+//         console.log("adding a cart");
+//     };
+//     let ogCart = localStorage.getItem("cart");
+//     let updatedCartItems = ogCart + itemToAdd + " , ";
+//     localStorage.setItem("cart", updatedCartItems);
+//     console.log("new cart item should be below as a string");
+//     console.log(localStorage);
+// }
