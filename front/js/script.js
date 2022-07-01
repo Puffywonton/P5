@@ -6,8 +6,8 @@ async function fetchProducts(result) {
     return result.json();
 }
 
-async function displayAllProducts() {
-    await fetchProducts()
+function displayAllProducts() {
+    fetchProducts()
     .then (function(products){
         console.log(products);
         for (let product in products){
@@ -15,7 +15,6 @@ async function displayAllProducts() {
         }
     })
 }
-
 
 
 function productCardCreator(product, products) {

@@ -1,7 +1,6 @@
 
 function getProductId(){
     let params = (new URL(document.location)).searchParams;
-    //pourquoi new??
     return params.get('id');
 }
 
@@ -13,29 +12,17 @@ async function fetchOneProduct(result) {
     result = await fetch("http://localhost:3000/api/products/"+productId)
     return result.json();
 }
-
-// function displayLeProduct() {
-//      fetchOneProduct()
-//     .then (function(leProduct) {
-//         console.log(leProduct);
-//         changeTitleHead(leProduct);
-//         addImg(leProduct);
-//         addTitleH1(leProduct);
-//         addPrice(leProduct);
-//         addDescription(leProduct);
-//         addColors(leProduct);
-//     })
-// }
-
-async function displayLeProduct() {
-    let leProduct= await fetchOneProduct();     
-    console.log(leProduct);
-    changeTitleHead(leProduct);
-    addImg(leProduct);
-    addTitleH1(leProduct);
-    addPrice(leProduct);
-    addDescription(leProduct);
-    addColors(leProduct);
+function displayLeProduct() {
+    fetchOneProduct()
+    .then (function(leProduct) {
+        console.log(leProduct);
+        changeTitleHead(leProduct);
+        addImg(leProduct);
+        addTitleH1(leProduct);
+        addPrice(leProduct);
+        addDescription(leProduct);
+        addColors(leProduct);
+    })
 }
 
 function changeTitleHead(newTitle) {
@@ -76,71 +63,76 @@ function addColors(newColors) {
     }
 }
 
-
-//ca marche mais c'est un peu nase:
-
-const cartAddButton = document.getElementById("addToCart");
-cartAddButton.addEventListener('click', function(){
-    console.log("CLICK CLICK");
-
-    console.log(productId);
-
-    let itemColor = document.getElementById("colors");
-    console.log(itemColor.value);
-
-    let itemQty = document.getElementById("quantity");
-    console.log(itemQty.value);
-
-    let cartItem = productId + "__" + itemColor.value + "__" + itemQty.value;
-    console.log(cartItem);
-    
-    addToCart(cartItem);
-})
-
-function addToCart(itemToAdd) {
-    console.log("hello there");
-    if (localStorage.getItem("cart") === null) {
-        localStorage.setItem("cart", "");
-        console.log("adding new cart");
-        console.log(localStorage);
-    } else {
-        console.log("cart array content: " + localStorage.getItem("cart"));
-    }
-    
-    let ogCart = localStorage.getItem("cart");
-    let updatedCartItems = ogCart + itemToAdd + " , ";
-    localStorage.setItem("cart", updatedCartItems);
-    console.log("new cart item should be below as a string");
-    console.log(localStorage);
+function CLEAR(){
+    localStorage.clear();
 }
-
-// function CLEAR(){
-//     localStorage.clear();
-// }
 // CLEAR();
 
-const cartAddButton = document.getElementById("addToCart");
-cartAddButton.addEventListener('click', function(){
+function cartCreator(){
+    if (localStorage.getItem("cart") === null) {
+        let cartArray = [];
+        console.log("creating new cart");
+        localStorage.setItem("cart", JSON.stringify(cartArray));
+    }
+}
+cartCreator();
+
+function cartItemCreator(color, quantity){
     let cartItem = {
         id: productId,
-        document.getElementById("colors").value : document.getElementById("quantity").value
-        quantity: ,
+        color: color,
+        qty: quantity 
     };
-    let cartItemString = JSON.stringify(cartItem);
-    console.log(cartItemString);
-    
-    // addToCart(cartItem);
+    console.log(cartItem);
+    return cartItem;
+}
+
+const cartAddButton = document.getElementById("addToCart");
+cartAddButton.addEventListener("click", function(){
+
+    let productColor = document.getElementById("colors").value;
+    let productQty = document.getElementById("quantity").value;
+
+    if (localStorage.getItem("cart") === null) {
+        let cartArray = [];
+        cartArray.push(cartItemCreator(productColor, productQty)); 
+        localStorage.setItem("cart", JSON.stringify(cartArray));
+        console.log("creating new cart");
+    }else{
+        let cart = JSON.parse(localStorage.getItem("cart"));
+        let locateItem = cart.find(function(item){
+            if (item.id == productId && item.color == productColor){
+                console.log("item already in cart")
+                //rajouter un if > ou < si il faut virer le updateonscreen
+                item.qty = productQty;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                return item
+            }
+        })
+        if (locateItem == null) {
+            console.log("item not in cart");
+            cart.push(cartItemCreator(productColor, productQty)); 
+            localStorage.setItem("cart", JSON.stringify(cart));
+            }
+        console.log(localStorage);
+        }
+    })
+
+
+
+function updateOnScreenQty(){
+    let productColor = document.getElementById("colors").value;
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    let findQty = cart.find(item => item.id == productId && item.color == productColor)
+    if (findQty == null){
+        document.getElementById("quantity").value = 0;
+    } else{
+        console.log(findQty.qty);
+        document.getElementById("quantity").value = findQty.qty;
+    }
+}
+
+document.getElementById("colors").addEventListener("change", function(){
+    updateOnScreenQty()
 })
 
-// function addToCart(itemToAdd) {
-//     console.log("hello there");
-//     if (localStorage.getItem("cart") === null) {
-//         localStorage.setItem("cart", []);
-//         console.log("adding a cart");
-//     };
-//     let ogCart = localStorage.getItem("cart");
-//     let updatedCartItems = ogCart + itemToAdd + " , ";
-//     localStorage.setItem("cart", updatedCartItems);
-//     console.log("new cart item should be below as a string");
-//     console.log(localStorage);
-// }
