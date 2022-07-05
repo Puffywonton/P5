@@ -1,10 +1,12 @@
-getCartFromStorage();
+getCartFromStorage()
 function getCartFromStorage() {
     let cart = JSON.parse(localStorage.getItem("cart"));
     for (let item in cart){
         displayCartItems(cart[item].id, cart[item].color, cart[item].qty)
     }
+    calculateTotalCart();
 }
+
 async function fetchOneProduct(result , productId) {
     result = await fetch("http://localhost:3000/api/products/"+productId)
     return result.json();
@@ -13,9 +15,11 @@ async function fetchOneProduct(result , productId) {
 function displayCartItems(productId, productColor, productQty) {
     fetchOneProduct("", productId)
     .then (function(leProduct){
+    
         let addArticle = document.createElement("article");
+        
         addArticle.setAttribute("class", "cart__item");
-        addArticle.setAttribute("id", productId);
+        addArticle.setAttribute("data-id", productId);
         addArticle.setAttribute("data-color", productColor);
         
         let addDivImg = document.createElement("div");
@@ -43,7 +47,6 @@ function displayCartItems(productId, productColor, productQty) {
 
         addDivContent.appendChild(addDivContentDescription)
         
-
         let addDivContentSettings = document.createElement("div");
         addDivContentSettings.setAttribute("class", "cart__item__content__settings");
 
@@ -59,9 +62,10 @@ function displayCartItems(productId, productColor, productQty) {
         addInputQty.setAttribute("min", "1");
         addInputQty.setAttribute("max", "100");
         addInputQty.setAttribute("value", productQty);
+        
         addDivContentSettingsQuantity.appendChild(addInputQty);
         addDivContentSettings.appendChild(addDivContentSettingsQuantity);
-
+        
         let addDivContentSettingsDelete = document.createElement("div");
         addDivContentSettingsDelete.setAttribute("class", "cart__item__content__settings__delete");
         let addPdelete = document.createElement("p");
@@ -73,8 +77,77 @@ function displayCartItems(productId, productColor, productQty) {
         addDivContent.appendChild(addDivContentSettings);
         addArticle.appendChild(addDivContent);
 
-
         document.getElementById("cart__items").appendChild(addArticle);
-    })
 
+        
+        //listen to input:
+        let modifiedQty = document.querySelector("article[data-id="+CSS.escape(productId)+"][data-color="+CSS.escape(productColor)+"] input");
+
+        modifiedQty.addEventListener("input", function(){
+            console.log("update article", modifiedQty.value);
+            updateCart(productId, productColor, modifiedQty.value)
+        })
+
+        //listen to delete:
+        document.querySelector("article[data-id="+CSS.escape(productId)+"][data-color="+CSS.escape(productColor)+"] p.deleteItem").addEventListener("click", function(){
+            console.log("delete color", productColor);
+            let toto = document.querySelector("article[data-id="+CSS.escape(productId)+"][data-color="+CSS.escape(productColor)+"]")
+            console.log(toto)
+            // toto.innerHTML = '';
+            toto.parentNode.removeChild(toto);
+            deleteItemCart(productId, productColor)
+        })
+
+
+
+    })
 }
+
+function updateCart(productId, productColor, modifiedQty) {
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    let locateItem = cart.find(function(item){
+        if (item.id == productId && item.color == productColor){
+            console.log("updated cart item")
+            item.qty = modifiedQty;
+            localStorage.setItem("cart", JSON.stringify(cart));
+            return item
+            }
+        })
+}
+
+function deleteItemCart(productId, productColor) {
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    
+    console.log(cart);
+    let tempCart = cart.filter(item => {
+        console.log("id")
+        console.log(item.id,"item")
+        console.log(productId)
+        console.log("color")
+        console.log(item.color,"item")
+        console.log(productColor);
+        if (item.id != productId || item.color != productColor) {
+            console.log("not same product")
+            return item;
+        }
+    })
+    console.log(tempCart);
+    localStorage.setItem("cart", JSON.stringify(tempCart));
+}
+
+function calculateTotalCart(){
+    let cart = JSON.parse(localStorage.getItem("cart"));
+    let cartTotal = 0;
+    for (let item in cart){
+        fetchOneProduct("", cart[item].id)
+        .then (function(leProduct){
+            cartTotal = cartTotal + parseFloat(leProduct.price)
+            if (cart.indexOf(cart[item]) == cart.length - 1){
+                console.log("WINNER")
+                console.log(cartTotal)
+                return cartTotal
+            }
+        })
+    }
+}
+
