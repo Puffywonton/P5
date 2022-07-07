@@ -1,3 +1,6 @@
+// ajouter un truc pour regrouper les items par ids
+// ajouter un truc pour verifier si le cart est correct ??
+
 getCartFromStorage()
 function getCartFromStorage() {
     let cart = JSON.parse(localStorage.getItem("cart"));
@@ -84,15 +87,14 @@ function displayCartItems(productId, productColor, productQty) {
         let modifiedQty = document.querySelector("article[data-id="+CSS.escape(productId)+"][data-color="+CSS.escape(productColor)+"] input");
 
         modifiedQty.addEventListener("input", function(){
-            console.log("update article", modifiedQty.value);
+            console.log("update article qty to:", modifiedQty.value);
             updateCart(productId, productColor, modifiedQty.value)
         })
 
         //listen to delete:
         document.querySelector("article[data-id="+CSS.escape(productId)+"][data-color="+CSS.escape(productColor)+"] p.deleteItem").addEventListener("click", function(){
-            console.log("delete color", productColor);
-            let toto = document.querySelector("article[data-id="+CSS.escape(productId)+"][data-color="+CSS.escape(productColor)+"]")
-            console.log(toto)
+            console.log("delete color:", productColor,"of product:", productId);
+            let toto = document.querySelector("article[data-id="+CSS.escape(productId)+"][data-color="+CSS.escape(productColor)+"]");
             // toto.innerHTML = '';
             toto.parentNode.removeChild(toto);
             deleteItemCart(productId, productColor)
@@ -105,47 +107,42 @@ function displayCartItems(productId, productColor, productQty) {
 
 function updateCart(productId, productColor, modifiedQty) {
     let cart = JSON.parse(localStorage.getItem("cart"));
-    let locateItem = cart.find(function(item){
+    cart.find(function(item){
         if (item.id == productId && item.color == productColor){
-            console.log("updated cart item")
-            item.qty = modifiedQty;
-            localStorage.setItem("cart", JSON.stringify(cart));
-            return item
-            }
-        })
+        item.qty = modifiedQty;
+        localStorage.setItem("cart", JSON.stringify(cart));
+        calculateTotalCart();
+        }
+    })
 }
 
 function deleteItemCart(productId, productColor) {
     let cart = JSON.parse(localStorage.getItem("cart"));
-    
-    console.log(cart);
     let tempCart = cart.filter(item => {
-        console.log("id")
-        console.log(item.id,"item")
-        console.log(productId)
-        console.log("color")
-        console.log(item.color,"item")
-        console.log(productColor);
         if (item.id != productId || item.color != productColor) {
-            console.log("not same product")
             return item;
         }
     })
-    console.log(tempCart);
+    console.log("product deleted");
     localStorage.setItem("cart", JSON.stringify(tempCart));
+    calculateTotalCart();
 }
+
+// ca marche mais c'est un peu naze surtout le if a la fin:
 
 function calculateTotalCart(){
     let cart = JSON.parse(localStorage.getItem("cart"));
-    let cartTotal = 0;
+    let cartTotalPrice = 0;
+    let cartTotalQty = 0;
     for (let item in cart){
         fetchOneProduct("", cart[item].id)
         .then (function(leProduct){
-            cartTotal = cartTotal + parseFloat(leProduct.price)
+            cartTotalQty = cartTotalQty + parseFloat(cart[item].qty);
+            let itemTotalPrice = cart[item].qty * leProduct.price
+            cartTotalPrice = cartTotalPrice + itemTotalPrice
             if (cart.indexOf(cart[item]) == cart.length - 1){
-                console.log("WINNER")
-                console.log(cartTotal)
-                return cartTotal
+                document.getElementById('totalQuantity').innerText=cartTotalQty
+                document.getElementById('totalPrice').innerText=cartTotalPrice
             }
         })
     }

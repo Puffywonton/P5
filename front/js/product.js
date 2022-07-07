@@ -92,6 +92,13 @@ cartAddButton.addEventListener("click", function(){
 
     let productColor = document.getElementById("colors").value;
     let productQty = document.getElementById("quantity").value;
+    
+
+
+    if (isNaN(productQty) || productQty == 0 || productColor == "" ){
+        console.error("NO NO NO")
+        return
+    }
 
     if (localStorage.getItem("cart") === null) {
         let cartArray = [];
@@ -102,7 +109,6 @@ cartAddButton.addEventListener("click", function(){
         let cart = JSON.parse(localStorage.getItem("cart"));
         let locateItem = cart.find(function(item){
             if (item.id == productId && item.color == productColor){
-                console.log("item already in cart")
                 //rajouter un if > ou < si il faut virer le updateonscreen
                 item.qty = productQty;
                 localStorage.setItem("cart", JSON.stringify(cart));
