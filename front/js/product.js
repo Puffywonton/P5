@@ -91,7 +91,7 @@ const cartAddButton = document.getElementById("addToCart");
 cartAddButton.addEventListener("click", function(){
 
     let productColor = document.getElementById("colors").value;
-    let productQty = document.getElementById("quantity").value;
+    let productQty = parseInt(document.getElementById("quantity").value);
     
 
 
