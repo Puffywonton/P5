@@ -8,6 +8,8 @@ const productId = getProductId();
 console.log("productId: "+productId);
 displayLeProduct();
 
+var productColorAvailable = []
+
 async function fetchOneProduct(result) {
     result = await fetch("http://localhost:3000/api/products/"+productId)
     return result.json();
@@ -22,6 +24,9 @@ function displayLeProduct() {
         addPrice(leProduct);
         addDescription(leProduct);
         addColors(leProduct);
+
+        productColorAvailable = leProduct.colors
+        console.log(productColorAvailable)
     })
 }
 
@@ -53,7 +58,6 @@ function addDescription(newDescription) {
 }
 
 function addColors(newColors) {
-    console.log(newColors.colors)
     for (let color in newColors.colors){
         let addNewColor = document.createElement("option");
         addNewColor.setAttribute("value", newColors.colors[color]);
@@ -70,22 +74,12 @@ function CLEAR(){
 
 function cartCreator(){
     if (localStorage.getItem("cart") === null) {
-        let cartArray = [];
+        let cartArray = {};
         console.log("creating new cart");
         localStorage.setItem("cart", JSON.stringify(cartArray));
     }
 }
 cartCreator();
-
-function cartItemCreator(color, quantity){
-    let cartItem = {
-        id: productId,
-        color: color,
-        qty: quantity 
-    };
-    console.log(cartItem);
-    return cartItem;
-}
 
 const cartAddButton = document.getElementById("addToCart");
 cartAddButton.addEventListener("click", function(){
@@ -93,52 +87,36 @@ cartAddButton.addEventListener("click", function(){
     let productColor = document.getElementById("colors").value;
     let productQty = parseInt(document.getElementById("quantity").value);
     
-
-
-    if (isNaN(productQty) || productQty == 0 || productColor == "" ){
-        console.error("NO NO NO")
+    let colorSelectionCheck = productColorAvailable.find(color => color == productColor);
+    if (colorSelectionCheck == null){
+        console.error("please select correct color")
         return
     }
-
-    if (localStorage.getItem("cart") === null) {
-        let cartArray = [];
-        cartArray.push(cartItemCreator(productColor, productQty)); 
-        localStorage.setItem("cart", JSON.stringify(cartArray));
-        console.log("creating new cart");
-    }else{
-        let cart = JSON.parse(localStorage.getItem("cart"));
-        let locateItem = cart.find(function(item){
-            if (item.id == productId && item.color == productColor){
-                //rajouter un if > ou < si il faut virer le updateonscreen
-                item.qty = productQty;
-                localStorage.setItem("cart", JSON.stringify(cart));
-                return item
-            }
-        })
-        if (locateItem == null) {
-            console.log("item not in cart");
-            cart.push(cartItemCreator(productColor, productQty)); 
-            localStorage.setItem("cart", JSON.stringify(cart));
-            }
-        console.log(localStorage);
-        }
-    })
-
-
-
-function updateOnScreenQty(){
-    let productColor = document.getElementById("colors").value;
-    let cart = JSON.parse(localStorage.getItem("cart"));
-    let findQty = cart.find(item => item.id == productId && item.color == productColor)
-    if (findQty == null){
-        document.getElementById("quantity").value = 0;
-    } else{
-        console.log(findQty.qty);
-        document.getElementById("quantity").value = findQty.qty;
+    if (productQty <= 0) {
+        console.error("please add correct quantity value")
+        return
     }
-}
+    
+    let cart = JSON.parse(localStorage.getItem("cart")); 
+    console.log(productId)
+    console.log(cart[productId])
+    
+    if (cart[productId]){
+        if (cart[productId][productColor]){
+            cart[productId][productColor] += productQty;
+        }
+        else{
+            cart[productId][productColor] = productQty;
+        }
+    }else{
+        cart[productId] = { [productColor] : productQty }
+    }
 
-document.getElementById("colors").addEventListener("change", function(){
-    updateOnScreenQty()
+    localStorage.setItem("cart", JSON.stringify(cart));
+    console.log("cart:", cart)
 })
+
+
+
+
 
