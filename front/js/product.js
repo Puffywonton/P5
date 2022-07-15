@@ -7,7 +7,6 @@ function getProductId(){
 }
 
 const productId = getProductId();
-console.log("productId: "+productId);
 displayLeProduct();
 
 var productColorAvailable = []
@@ -19,28 +18,24 @@ async function fetchOneProduct(result) {
 function displayLeProduct() {
     fetchOneProduct()
     .then (function(leProduct) {
-        console.log(leProduct);
         changeTitleHead(leProduct);
         addImg(leProduct);
         addTitleH1(leProduct);
         addPrice(leProduct);
         addDescription(leProduct);
         addColors(leProduct);
-
         productColorAvailable = leProduct.colors
-        console.log(productColorAvailable)
     })
 }
 
 function changeTitleHead(newTitle) {
     let findTitle = document.querySelector("title");
     findTitle.textContent = newTitle.name + " - Kanap";
-    console.log(findTitle);
+
 } 
 
 function addImg(newImg) {
     let imgSelector = document.getElementsByClassName("item__img");
-    console.log(imgSelector[0]);
     let imgCreator = document.createElement("img");
     imgCreator.setAttribute("src", newImg.imageUrl);
     imgCreator.setAttribute("alt", newImg.altTxt);
@@ -65,7 +60,6 @@ function addColors(newColors) {
         addNewColor.setAttribute("value", newColors.colors[color]);
         addNewColor.innerText= newColors.colors[color];
         document.getElementById("colors").appendChild(addNewColor);
-        // document.getElementById("colors").innerHTML = "<option value=\""+newColors.colors[color]+"\">"+newColors.colors[color]+"</option>";
     }
 }
 
@@ -77,7 +71,6 @@ function CLEAR(){
 function cartCreator(){
     if (localStorage.getItem("cart") === null) {
         let cartArray = {};
-        console.log("creating new cart");
         localStorage.setItem("cart", JSON.stringify(cartArray));
     }
 }
@@ -100,8 +93,6 @@ cartAddButton.addEventListener("click", function(){
     }
     
     let cart = JSON.parse(localStorage.getItem("cart")); 
-    console.log(productId)
-    console.log(cart[productId])
     
     if (cart[productId]){
         if (cart[productId][productColor]){
@@ -115,7 +106,6 @@ cartAddButton.addEventListener("click", function(){
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-    console.log("cart:", cart)
 })
 
 
