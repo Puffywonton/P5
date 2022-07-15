@@ -1,5 +1,3 @@
-// {"107fb5b75607497b96722bda5b504926":{"Blue":1,"White":1,"Black":1},"415b7cacb65d43b2b5c1ff70f3393ad1":{"Black/Yellow":2,"Black/Red":5}}
-
 
 var calculateTotalCart = () => {
     let cartTotalPrice = 0;
@@ -23,7 +21,7 @@ createMyCart();
 async function createMyCart() {
     // let myCart = {}
     let cart = JSON.parse(localStorage.getItem("cart"));
-    console.log('cart', cart)
+
     
     for (let itemId in cart){
         await fetchOneProduct("" , itemId)
@@ -36,7 +34,7 @@ async function createMyCart() {
             delete myCart[itemId].info._id;
         })
     }
-    console.log("mycart", myCart)
+
     displayCartItems(myCart);
 }
 
@@ -55,7 +53,7 @@ async function displayCartItems(cart) {
                 </div>
                 <div class="cart__item__content">
                     <div class="cart__item__content__description">
-                        <h2>`+ cart[itemId].info.name +`</h2>
+                        <h2>${cart[itemId].info.name}</h2>
                         <p>`+ color +`</p>
                         <p>`+ cart[itemId].info.price +` €</p>
                     </div>
@@ -76,10 +74,8 @@ async function displayCartItems(cart) {
     calculateTotalCart();
 }
 
-//QUESTION  delete local ou mycart ??? 
-
 var updateCart = (id,color) => {
-    let newQty = document.querySelector("article[data-id="+CSS.escape(id)+"][data-color="+CSS.escape(color)+"] input").value;
+    let newQty = document.querySelector(`article[data-id="${id}"][data-color="${color}"] input`).value;
     
     myCart[id].content[color] = newQty
 
@@ -90,7 +86,7 @@ var updateCart = (id,color) => {
 }
 
 var deleteItem = (id,color) => {
-    let articleToRemove = document.querySelector("article[data-id="+CSS.escape(id)+"][data-color="+CSS.escape(color)+"]")
+    let articleToRemove = document.querySelector(`article[data-id="${id}"][data-color="${color}"]`)
     articleToRemove.parentNode.removeChild(articleToRemove)
 
     delete myCart[id].content[color];
@@ -107,157 +103,86 @@ var deleteItem = (id,color) => {
     calculateTotalCart();
 
 }
-class checkOutCheker{
-    constructor(elementId,regExp,errorElementId){
-               this.elementId = elementId;
-               this.regExp = regExp;
-               this.errorElementId = errorElementId
-            
-    }
-}
-const checkoutCheckerList = [
-    new checkOutCheker("firstName","^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$","firstNameErrorMsg"),
-    new checkOutCheker("lastName","^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$","lastNameErrorMsg"),
-    new checkOutCheker("address","^(\d+[a-z]?)+\s+(.+(?=\W))+\s+(.*)","addressErrorMsg"),
-    new checkOutCheker("city","^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$","cityErrorMsg"),
-    new checkOutCheker("email","^((\w[^\W]+)[\.\-]?){1,}\@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$","emailErrorMsg")
-]
 
- 
- 
-var checkoutCheckerGenerator = (list) => {
-    // list.forEach(element => {
-    //     let x = new checkOutCheker("hello",'hey',9)
-    //     console.log(x.potato)
-    //     console.log(Object.keys(element))
-    //     console.log(Object.values(element))
-    //     console.log(element.value)
-    // });
-    for (element in list){
-        let elementDoc = document.getElementById(list[element].elementId)
-        let re = new RegExp(list[element].regExp);
-        console.log(elementDoc)
-        elementDoc.addEventListener("input", (e) => {
-            console.log(e)
-            console.log(list[element].errorElementId)
-            console.log(e.target.id+"ErrorMsg")
-            let errorElement = document.getElementById(e.target.id+"ErrorMsg")
-            if (re.test(e.regExp)) {
-        
-                errorElement.innerText = "yo yo yo"
-        
-            }else{
-                errorElement.innerText = "no no no"
-        
-            }
-        })
-
-
-        // elementDoc.addEventListener("input",(e) => eventFunction(e.target,list[element].errorElementId,list[element].regExp))
-    }
-}
-
-
-
-
-var eventFunction = (e,errorElementId,regExp) =>{
-    let errorElement = document.getElementById(errorElementId)
-    let re = new RegExp(regExp);
-    console.log(e.regExp)
-    if (re.test(e.regExp)) {
-
-        errorElement.innerText = "yo yo yo"
-
+var disableSubmit = (disabled) => {
+    if (disabled) {
+        document.getElementById("order").setAttribute("disabled", true);
     }else{
-        errorElement.innerText = "no no no"
-
+        document.getElementById("order").removeAttribute("disabled")
     }
-} 
-checkoutCheckerGenerator(checkoutCheckerList)
+}
+
+const checkoutCheckerList = {
+    firstName : "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$",
+    lastName : "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$",
+    address : "^(\\d+[a-z]?)+\\s+(.+(?=\\W))+\\s+(.*)",
+    city : "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$",
+    email : `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}`
+}
+
+var checkoutCheckerGenerator = () => {
+    let cartQuestionsInputs = document.querySelectorAll(".cart__order__form__question input")
+    let errors = false
+    cartQuestionsInputs.forEach(element => {
+        let re = new RegExp(checkoutCheckerList[element.id])
+        if (re.test(element.value)){
+            document.getElementById(element.id+"ErrorMsg").innerText ="";
+        }else{
+            document.getElementById(element.id+"ErrorMsg").innerText =element.id + " NOT valid";
+            errors = true
+        }
+    })
+    return errors
+}
 
 
-// async function checkoutCheckerGenerator() {
-// console.log(p.replace('dog', 'monkey'));
+const submitBtn = document.getElementById("order")
+submitBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    let errors = checkoutCheckerGenerator(checkoutCheckerList)
+    if (errors) return 
+    let contact = {
+        firstName : document.getElementById("firstName").value,
+        lastName : document.getElementById("lastName").value,
+        address : document.getElementById("address").value,
+        city : document.getElementById("city").value,
+        email : document.getElementById("email").value
+    }
 
-// const inputFirstName = document.getElementById("firstName").addEventListener("input", function(){
-//     console.log("hello")
-// })
-// const firstNameError = document.getElementById("firstNameErrorMsg")
-
-// const inputLastName = document.getElementById("lastName").addEventListener("input", function(){
-//     console.log("hello")
-// })
-// const lastNameError = document.getElementById("lastNameErrorMsg")
-
-// const inputAddress = document.getElementById("address").addEventListener("input", function(address){
-    // if (/^\d+\s[A-z]+\s[A-z]+/.test(address.target.value)) {
-    //     addressError.innerText = "Valid Address";
-    //     // disableSubmit(false);
-    // } else {
-    //     addressError.innerText = "Invalid Address please fix";
-    //     // disableSubmit(true);
-    // }
-
-// })
-// const addressError = document.getElementById("addressErrorMsg")
+    let products = stringCartIds() 
 
 
-// const cityError = document.getElementById("cityErrorMsg")
-// const inputCity = document.getElementById("city").addEventListener("input", function(city){
-//     if (/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/.test(city.target.value)) {
-//         cityError.innerText = "Valid City";
-//         // disableSubmit(false);
-//     } else {
-//         cityError.innerText = "Invalid City please fix";
-//         // disableSubmit(true);
-//     }
-// })
+    let package = {
+        contact, products
+    }
 
-// //email checker
-// const emailError = document.getElementById("emailErrorMsg")
-// const inputEmail = document.getElementById("email").addEventListener("input", function(mail){
-//     if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(mail.target.value)) {
-//         emailError.innerText = "Valid Email";
-//         // disableSubmit(false);
-//     } else {
-//         emailError.innerText = "Invalid Email please fix";
-//         // disableSubmit(true);
-//     }
-// })
+    sendApi(package)
 
+})
 
-// const orderButton = document.getElementById("order") .addEventListener("click", function(){
-//     console.log("hello")
-// })
+var stringCartIds = () => {
+    let products = []
+    for (id in myCart){
+        products.push(id)
+    }
+    return products
+}
 
-
-// var emailChecker = () => {
-//     ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
-// }
-// function getCodeValidation() {
-//     return document.getElementById("code-validation");
-//   }
-  
-//   function disableSubmit(disabled) {
-//     if (disabled) {
-//       document
-//         .getElementById("submit-btn")
-//         .setAttribute("disabled", true);
-//     } else {
-//       document
-//         .getElementById("submit-btn")
-//         .removeAttribute("disabled");
-//     }
-//   }
-  
-//   document
-//     .getElementById("code")
-//     .addEventListener("input", function(e) {
-//     if (/^CODE-/.test(e.target.value)) {
-//       getCodeValidation().innerText = "Code valide";
-//       disableSubmit(false);
-//     } else {
-//       getCodeValidation().innerText = "Code invalide";
-//       disableSubmit(true);
-//     }
-//   });
+function sendApi(package) {
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json', 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(package)
+      })
+    .then(function(res) {
+        if (res.ok) {
+            return res.json();
+        }
+    })
+    .then(function(value) {
+        console.log("here?",value)
+    });
+}

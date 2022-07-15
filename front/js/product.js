@@ -1,3 +1,5 @@
+// FETCH OR GET ???
+
 
 function getProductId(){
     let params = (new URL(document.location)).searchParams;
@@ -11,7 +13,7 @@ displayLeProduct();
 var productColorAvailable = []
 
 async function fetchOneProduct(result) {
-    result = await fetch("http://localhost:3000/api/products/"+productId)
+    result = await fetch(`http://localhost:3000/api/products/${productId}`)
     return result.json();
 }
 function displayLeProduct() {
