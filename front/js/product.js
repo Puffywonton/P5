@@ -1,5 +1,3 @@
-// FETCH OR GET ???
-
 
 function getProductId(){
     let params = (new URL(document.location)).searchParams;

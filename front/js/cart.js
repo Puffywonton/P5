@@ -183,6 +183,6 @@ function sendApi(package) {
         }
     })
     .then(function(value) {
-        console.log("here?",value)
+        location.href = "./confirmation.html?orderId="+value.orderId
     });
 }
