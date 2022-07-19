@@ -1,11 +1,10 @@
-
-displayAllProducts();
-
+// recup les produits sur l'api
 async function fetchProducts(result) {
     result = await fetch("http://localhost:3000/api/products")
     return result.json();
 }
 
+// lancer la fonction qui affiche les produits un par un
 function displayAllProducts() {
     fetchProducts()
     .then (function(products){
@@ -16,7 +15,7 @@ function displayAllProducts() {
     })
 }
 
-
+// afficher le produit en generant du html
 function productCardCreator(product, products) {
     let linkBoxCreator = document.createElement("a");
     let selector = products[product]
@@ -44,5 +43,5 @@ function productCardCreator(product, products) {
     articleCreator.appendChild(pCreator);
 }
 
-
+displayAllProducts();
 

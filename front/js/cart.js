@@ -1,4 +1,4 @@
-
+// pour calculer le total (prix + quantite) du panier et l'afficher sur l'ecran
 var calculateTotalCart = () => {
     let cartTotalPrice = 0;
     let totalQty = 0;
@@ -16,13 +16,11 @@ var calculateTotalCart = () => {
     document.getElementById('totalPrice').innerText=cartTotalPrice
 }
 
+// pour rassembler tte les infos de mon panier
 var myCart = {}
 createMyCart();
 async function createMyCart() {
-    // let myCart = {}
     let cart = JSON.parse(localStorage.getItem("cart"));
-
-    
     for (let itemId in cart){
         await fetchOneProduct("" , itemId)
         .then (leProduct => {
@@ -34,15 +32,17 @@ async function createMyCart() {
             delete myCart[itemId].info._id;
         })
     }
-
     displayCartItems(myCart);
 }
 
+// pour recuper les infos d'un produit avec l'api
 async function fetchOneProduct(result , productId) {
     result = await fetch("http://localhost:3000/api/products/"+productId)
     return result.json();
 }
 
+
+// pour generer le html de chaque article du panier
 async function displayCartItems(cart) {
     for (let itemId in cart){
         for (let color in cart[itemId].content){
@@ -74,6 +74,7 @@ async function displayCartItems(cart) {
     calculateTotalCart();
 }
 
+//pour modifier la quantite d'un article dans le panier
 var updateCart = (id,color) => {
     let newQty = document.querySelector(`article[data-id="${id}"][data-color="${color}"] input`).value;
     
@@ -85,6 +86,7 @@ var updateCart = (id,color) => {
     calculateTotalCart();
 }
 
+// pour supprimer un produit du panier
 var deleteItem = (id,color) => {
     let articleToRemove = document.querySelector(`article[data-id="${id}"][data-color="${color}"]`)
     articleToRemove.parentNode.removeChild(articleToRemove)
@@ -101,9 +103,9 @@ var deleteItem = (id,color) => {
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     calculateTotalCart();
-
 }
 
+// pour desactive le bouton submit si le formulaire n'est pas correctement rempli
 var disableSubmit = (disabled) => {
     if (disabled) {
         document.getElementById("order").setAttribute("disabled", true);
@@ -112,6 +114,7 @@ var disableSubmit = (disabled) => {
     }
 }
 
+// verification du formulaire avec du regexp avant envoi
 const checkoutCheckerList = {
     firstName : "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$",
     lastName : "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$",
@@ -119,7 +122,6 @@ const checkoutCheckerList = {
     city : "^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$",
     email : `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}`
 }
-
 var checkoutCheckerGenerator = () => {
     let cartQuestionsInputs = document.querySelectorAll(".cart__order__form__question input")
     let errors = false
@@ -135,7 +137,7 @@ var checkoutCheckerGenerator = () => {
     return errors
 }
 
-
+// bouton submit du formulaire
 const submitBtn = document.getElementById("order")
 submitBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -148,18 +150,14 @@ submitBtn.addEventListener("click", (e) => {
         city : document.getElementById("city").value,
         email : document.getElementById("email").value
     }
-
     let products = stringCartIds() 
-
-
     let package = {
         contact, products
     }
-
     sendApi(package)
-
 })
 
+// regrouper les ids des produits pour l'envoi du formulaire
 var stringCartIds = () => {
     let products = []
     for (id in myCart){
@@ -168,6 +166,7 @@ var stringCartIds = () => {
     return products
 }
 
+// fonction pour post avec l'api afin de recuperer le numero de commande pour le renvoi vers la page confirmation
 function sendApi(package) {
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",

@@ -1,18 +1,20 @@
+const productId = getProductId();
+var productColorAvailable = []
 
+
+//recup l'id du produit dans l'url
 function getProductId(){
     let params = (new URL(document.location)).searchParams;
     return params.get('id');
 }
 
-const productId = getProductId();
-displayLeProduct();
-
-var productColorAvailable = []
-
+//recup les infos du produits avec l'api et l'id
 async function fetchOneProduct(result) {
     result = await fetch(`http://localhost:3000/api/products/${productId}`)
     return result.json();
 }
+
+//afficher le produit
 function displayLeProduct() {
     fetchOneProduct()
     .then (function(leProduct) {
@@ -29,7 +31,6 @@ function displayLeProduct() {
 function changeTitleHead(newTitle) {
     let findTitle = document.querySelector("title");
     findTitle.textContent = newTitle.name + " - Kanap";
-
 } 
 
 function addImg(newImg) {
@@ -61,19 +62,16 @@ function addColors(newColors) {
     }
 }
 
-function CLEAR(){
-    localStorage.clear();
-}
-// CLEAR();
-
+// creer le localstorage pour le panier
 function cartCreator(){
     if (localStorage.getItem("cart") === null) {
         let cartArray = {};
         localStorage.setItem("cart", JSON.stringify(cartArray));
     }
 }
-cartCreator();
 
+
+// eventListener dans le html pour ajouter un produit dans le panier
 const cartAddButton = document.getElementById("addToCart");
 cartAddButton.addEventListener("click", function(){
 
@@ -106,7 +104,8 @@ cartAddButton.addEventListener("click", function(){
     localStorage.setItem("cart", JSON.stringify(cart));
 })
 
-
+displayLeProduct();
+cartCreator();
 
 
 
